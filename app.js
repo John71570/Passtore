@@ -18,6 +18,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('vendor',express.static(path.join(__dirname,'public/vendor')));
+app.use('css',express.static(path.join(__dirname,'public/css')));
+app.use('js',express.static(path.join(__dirname,'public/js')));
+app.use('scss',express.static(path.join(__dirname,'public/scss')));
+
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
