@@ -22,6 +22,8 @@ app.use('vendor',express.static(path.join(__dirname,'public/vendor')));
 app.use('css',express.static(path.join(__dirname,'public/css')));
 app.use('js',express.static(path.join(__dirname,'public/js')));
 app.use('scss',express.static(path.join(__dirname,'public/scss')));
+app.use('lib',express.static(path.join(__dirname,'public/lib')));
+app.use('javascripts',express.static(path.join(__dirname,'public/javascripts')));
 
 
 app.use('/', indexRouter);

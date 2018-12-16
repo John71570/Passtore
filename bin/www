@@ -29,6 +29,14 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
+
+/**
+ * Connection to MySQL database
+ */
+var databaseConfig = require('../config/config-database');
+databaseConfig.sequelizeInitialisation();
+
+
 /**
  * Normalize a port into a number, string, or false.
  */
