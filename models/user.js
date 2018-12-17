@@ -12,8 +12,12 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     user_public_key: {
-        type: DataTypes.STRING(8192),
-        allowNull: false
+      type: DataTypes.STRING(8192),
+      allowNull: false
+    },
+    user_email: {
+      type: DataTypes.STRING(128),
+      allowNull: false
     },
     createdAt: {
       type: DataTypes.DATE,

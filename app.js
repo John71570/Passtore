@@ -3,11 +3,17 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var session = require('express-session');
+var passport = require('passport');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var usersRouter = require('./routes/user');
 
 var app = express();
+
+//------------------------------ All required modules from Planizi repository -----------------------------------
+var authenticationConfig = require('./config/config-authentication');
+authenticationConfig.localAuthenticationConfiguration
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -17,6 +23,11 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(session({
+	secret: "key"
+}));
+app.use(passport.initialize());
+//app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('vendor',express.static(path.join(__dirname,'public/vendor')));
 app.use('css',express.static(path.join(__dirname,'public/css')));
@@ -25,9 +36,8 @@ app.use('scss',express.static(path.join(__dirname,'public/scss')));
 app.use('lib',express.static(path.join(__dirname,'public/lib')));
 app.use('javascripts',express.static(path.join(__dirname,'public/javascripts')));
 
-
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/user', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

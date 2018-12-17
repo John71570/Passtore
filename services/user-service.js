@@ -1,42 +1,40 @@
 var uuidv4 = require('uuid/v4');
 
 //------------------------ List all fields of the table -----------------------------
-let fields = ['user_login', 'user_password', 'user_public_key'];
+let fields = ['user_login', 'user_password', 'user_public_key', 'user_email'];
 
 
 //------------------------ Define all methods that can check and format each field -----------------------------
-module.exports.checkAndFormat_login = function(value){
+module.exports.checkAndFormat_user_login = function(value){
 	return value;
 };
 
-module.exports.checkAndFormat_password = function(value){
+module.exports.checkAndFormat_user_password = function(value){
 	return value;
 };
 
-module.exports.checkAndFormat_website = function(value){
+module.exports.checkAndFormat_user_public_key = function(value){
 	return value;
 };
 
-module.exports.checkAndFormat_comment = function(value){
+module.exports.checkAndFormat_user_email = function(value){
 	return value;
 };
 
 
 //------------------------ Make all previous methods callable -----------------------------
 var checkAndFormatCallable = {
-	login : this.checkAndFormat_login,
-	password : this.checkAndFormat_password,
-	website : this.checkAndFormat_website,
-	comment: this.checkAndFormat_comment
+	user_login : this.checkAndFormat_user_login,
+	user_password : this.checkAndFormat_user_password,
+	user_public_key : this.checkAndFormat_user_public_key,
+	user_email: this.checkAndFormat_user_email
 };
 
 
 //------------------------ The most important function that map request to an object well formed for the database -----------------------------
-module.exports.mapPassword = function(req, user) {
+module.exports.mapUser = function(req) {
 
 	let result = {
-		uuid: uuidv4(),
-		user: "john"
 	};
 
 	for (var key in req.body) {

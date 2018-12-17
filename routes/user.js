@@ -2,87 +2,45 @@ var express = require('express');
 var router = express.Router();
 var passport = require('passport');
 var sequelize = require('../config/config-database').sequelize;
-var Password = sequelize.import('../models/password');
-var validator =  require('../services/raw-service');
-var uuidv4 = require('uuid/v4');
+var User = sequelize.import('../models/user');
+var validator =  require('../services/user-service');
 
+router.get('/', function(req, res, next) {
 
-router.get('/', function (req, res, next) {
-	if(req.session.user){
-		res.redirect('/dashboard');
-	}else{
-		res.redirect('login');
-	}
-});
-
-router.get('/login', function(req, res, next) {
-	if(req.session.user){
-		res.redirect('/');
-	}else{
-		res.render('login');
-	}
-});
-
-router.post('/login',
-	passport.authenticate('local', {
-		successRedirect: '/',
-		failureRedirect: '/login',
-		failureFlash: true
-	})
-);
-
-router.get('/register', function(req, res, next) {
-	if(req.session.user){
-		res.redirect('/');
-	}else{
-		res.render('register');
-	}
-});
-
-router.get('/logout', function(req, res, next) {
-	req.session.destroy();
-	res.redirect('/');
-});
-
-router.get('/dashboard', function(req, res, next) {
-
-	Password.findAll({ raw: true, where: { user: "johsn" } })
-		.then( passwords => {
-			if (passwords) {
-				res.render('dashboard', { passwords: passwords });
+	User.findOne({ raw: true, where: { user_login: "john" } })
+		.then( user => {
+			if (user) {
+				res.render('configurations', { user: userInfo });
 			} else {
 				res.status(404);
 				res.render('dashboard');
 			}
 		})
-		.catch(err => {
+		.catch( err => {
 			res.status(500);
 			res.render('error');
 		});
 
 });
 
-router.post('/raw', function(req, res, next) {
+router.post('/', function(req, res, next) {
 
 	if(req.is('application/json')){
 
-		var newPasswordPromise = Password.build(validator.mapPassword(req, "john"));
+		var newUsePromise = User.build(validator.mapUser(req));
 
-		Password.findOne({ where: {
-				user : "john",
-				login : validator.checkAndFormat_login(req.body.login),
-				password : validator.checkAndFormat_password(req.body.password),
-				website : validator.checkAndFormat_website(req.body.website)
+		User.findOne({ where: {
+				user_login : req.body.user_login,
 			}})
 			.then( result =>{
 				//If raw does not exist yet
 				if(result === null){
 					//Save the new role
-					Promise.all([newPasswordPromise.save()])
+					Promise.all([newUsePromise.save()])
 						.then( result => {
 							res.status(201);
 							res.send({
-								"uuid": result[0].uuid
+								"login": result[0].login
 							});
 						})
 						.catch( err =>{
@@ -95,11 +53,11 @@ router.post('/raw', function(req, res, next) {
 						});
 					//If role exists yet
 				}else{
-					res.status(404);
+					res.status(409);
 					res.send({
-						"error": "NotTerminated",
-						"code": 404,
-						"message": "The password raw yet exists"
+						"error": "UserAlreadyExist",
+						"code": 409,
+						"message": "The user yet exists"
 					});
 				}
 			})
@@ -122,26 +80,26 @@ router.post('/raw', function(req, res, next) {
 
 });
 
-router.put('/raw/:uuid', function(req, res, next) {
+router.put('/', function(req, res, next) {
 
 	if(req.is('application/json')){
 
-		Password.findOne({ where: {
-				user : "john",
-				uuid : req.params.uuid
+		User.findOne({ where: {
+				user_login : "userJ"
 			} })
 			.then( result =>{
 
 				if (result) {
 
-					result.update(validator.mapPassword(req)).then( result2 => {
+					req.body.user_login = "userJ";
+					result.update(validator.mapUser(req)).then( result2 => {
 						res.status(204).end();
 					}).catch( err => {
 						res.status(500);
 						res.send({
 							"error": "InternalServerError",
 							"code": 500,
-							"message": "Problem to update the raw : "+err
+							"message": "Problem to update the user : "+err
 						});
 					});
 
@@ -173,11 +131,10 @@ router.put('/raw/:uuid', function(req, res, next) {
 
 });
 
-router.delete('/raw/:uuid', function(req, res, next) {
+router.delete('/', function(req, res, next) {
 
-	Password.destroy({ where: {
-			user : "john",
-			uuid : req.params.uuid
+	User.destroy({ where: {
+			user_login : "john",
 		}})
 		.then( result => {
 			if (result > 0) {
@@ -187,7 +144,7 @@ router.delete('/raw/:uuid', function(req, res, next) {
 				res.send({
 					"error": "NotFound",
 					"code": 404,
-					"message": "The password does not exist"
+					"message": "The user does not exist"
 				});
 			}
 		})
