@@ -83,43 +83,46 @@
 
   <div class="row m-auto pr-3 pl-3 pb-3" style="max-width: 1500px">
 
-    <div class="m-auto" style="max-width: 100%; overflow: auto;">
+    <div class="m-auto col-12" style="max-width: 100%; overflow: auto;">
 
     <table class="table table-password table-striped p-2 table-sm" id="makeEditable">
       <thead>
       <tr>
+        <th hidden>ID</th>
+        <th style="min-width:150px">Website/Service</th>
         <th style="min-width:150px">Login</th>
         <th style="min-width:200px">Password</th>
-        <th style="min-width:150px">Email</th>
         <th style="min-width:150px">Comments</th>
       </tr>
       </thead>
       <tbody>
       <tr>
+        <td hidden>1</td>
+        <td class="td-service">def@somemail.com</td>
         <td class="td-login">Default</td>
         <td class="td-password">Defaultson</td>
-        <td class="td-email">def@somemail.com</td>
         <td class="td-comment">def@somemail.com</td>
       </tr>
       <tr class="success">
+        <td hidden>2</td>
+        <td class="td-service">def@somemail.com</td>
         <td class="td-login">Default</td>
         <td class="td-password">Defaultson</td>
-        <td class="td-email">def@somemail.comssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss</td>
         <td class="td-comment">def@somemail.com</td>
       </tr>
       <tr class="danger">
+        <td hidden>3</td>
+        <td class="td-service">def@somemail.com</td>
         <td class="td-login">Default</td>
         <td class="td-password">Defaultson</td>
-        <td class="td-email">def@somqsdfghjhhgdsscfxdgfxdgxemail.com</td>
         <td class="td-comment">def@somemdfgxdfgxdfgxdfgxdfgxdfgdfgdffff f fgfg fg fg  d sqqsdfdgfdsdfggdfsail.com</td>
       </tr>
       </tbody>
     </table>
-    <div class="text-center">
-    <button id="but_add" class="btn btn-primary">Add raw</button>
-    <button id="but_add" class="btn btn-success">Valid updates</button>
-  </div>
-
+    </div>
+    <div class="m-auto col-12 text-center">
+      <button id="but_add" class="btn btn-primary">Add raw</button>
+      <button id="but_add" class="btn btn-success">Valid updates</button>
     </div>
 
   </div>
@@ -132,8 +135,12 @@
 	  $('#makeEditable').SetEditable({
 		  $addButton: $('#but_add'),
 		  onEdit: function() {},
-		  onDelete: function() {},
-		  onBeforeDelete: function() {},
+		  onDelete: function() {
+
+          },
+		  onBeforeDelete: function(){
+		  	alert("SURE ?");
+          },
 		  onAdd: function() {}
 	  });
   </script>
