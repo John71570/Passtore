@@ -2,11 +2,10 @@
 
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('password', {
-    id: {
-      type: DataTypes.INTEGER(11),
+    uuid: {
+      type: DataTypes.STRING(64),
       allowNull: false,
-      primaryKey: true,
-      autoIncrement: true
+      primaryKey: true
     },
     user: {
       type: DataTypes.STRING(256),

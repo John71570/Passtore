@@ -96,27 +96,15 @@
       </tr>
       </thead>
       <tbody>
+      <% passwords.forEach((raw, index) => { %>
       <tr>
-        <td hidden>1</td>
-        <td class="td-service">def@somemail.com</td>
-        <td class="td-login">Default</td>
-        <td class="td-password">Defaultson</td>
-        <td class="td-comment">def@somemail.com</td>
+        <td hidden><%= raw.uuid %></td>
+        <td class="td-service"><%= raw.website %></td>
+        <td class="td-login"><%= raw.login %></td>
+        <td class="td-password"><%= raw.password %></td>
+        <td class="td-comment"><%= raw.comment %></td>
       </tr>
-      <tr class="success">
-        <td hidden>2</td>
-        <td class="td-service">def@somemail.com</td>
-        <td class="td-login">Default</td>
-        <td class="td-password">Defaultson</td>
-        <td class="td-comment">def@somemail.com</td>
-      </tr>
-      <tr class="danger">
-        <td hidden>3</td>
-        <td class="td-service">def@somemail.com</td>
-        <td class="td-login">Default</td>
-        <td class="td-password">Defaultson</td>
-        <td class="td-comment">def@somemdfgxdfgxdfgxdfgxdfgxdfgdfgdffff f fgfg fg fg  d sqqsdfdgfdsdfggdfsail.com</td>
-      </tr>
+      <% }) %>
       </tbody>
     </table>
     </div>
