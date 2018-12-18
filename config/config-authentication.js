@@ -11,10 +11,11 @@ let localAuthenticationConfiguration = passport.use(new LocalStrategy({
 	function(login, password, done) {
 		User.findOne({ raw: true, where: { user_login: login }})
 			.then( user => {
+				console.log('AUTH: '+user.user_login+user.user_password);
 				if (!user) {
 					return done(null, false, { message: 'Incorrect username.' });
 				}
-				if (user.password != password) {
+				if (user.user_password != password) {
 					return done(null, false, { message: 'Incorrect password.' });
 				}
 				return done(null, user);
@@ -24,6 +25,14 @@ let localAuthenticationConfiguration = passport.use(new LocalStrategy({
 			});
 	}
 ));
+
+passport.serializeUser(function(user, done) {
+	done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+	done(null, user);
+});
 
 module.exports = {
 	localAuthenticationConfiguration: localAuthenticationConfiguration

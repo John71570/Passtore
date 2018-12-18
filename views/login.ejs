@@ -28,17 +28,17 @@
       <div class="card card-login mx-auto mt-5">
         <div class="card-header text-center">PASSTORE > Login</div>
         <div class="card-body">
-          <form>
+          <form method="post" action="/login">
             <div class="form-group">
               <div class="form-label-group">
-                <input type="email" id="inputEmail" name="username" class="form-control" placeholder="Email address" required="required" autofocus="autofocus">
-                <label for="inputEmail">Login</label>
+                <input type="text" id="login" name="username" class="form-control" placeholder="Login" required="required" autofocus="autofocus">
+                <label for="login">Login</label>
               </div>
             </div>
             <div class="form-group">
               <div class="form-label-group">
-                <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required="required">
-                <label for="inputPassword">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Password" required="required">
+                <label for="password">Password</label>
               </div>
             </div>
             <button type="submit" class="btn btn-primary btn-block">Login</button>

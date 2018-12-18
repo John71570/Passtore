@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
 var passport = require('passport');
+var bodyParser = require('body-parser');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/user');
@@ -26,8 +27,9 @@ app.use(cookieParser());
 app.use(session({
 	secret: "key"
 }));
+app.use(bodyParser.json());
 app.use(passport.initialize());
-//app.use(passport.session());
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('vendor',express.static(path.join(__dirname,'public/vendor')));
 app.use('css',express.static(path.join(__dirname,'public/css')));
@@ -52,7 +54,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.send(err+" --- "+err.message);
 });
 
 module.exports = app;

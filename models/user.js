@@ -17,7 +17,8 @@ module.exports = function(sequelize, DataTypes) {
     },
     user_email: {
       type: DataTypes.STRING(128),
-      allowNull: false
+      allowNull: true,
+      default: null
     },
     createdAt: {
       type: DataTypes.DATE,

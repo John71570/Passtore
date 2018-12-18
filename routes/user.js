@@ -25,58 +25,96 @@ router.get('/', function(req, res, next) {
 
 router.post('/', function(req, res, next) {
 
-	if(req.is('application/json')){
+	//if(req.is('application/json')){
+		var bod = req.body;
+		console.log(typeof bod);
 
-		var newUsePromise = User.build(validator.mapUser(req));
+		//var newUsePromise = User.build(validator.mapUser(req));
 
-		User.findOne({ where: {
-				user_login : req.body.user_login,
-			}})
-			.then( result =>{
-				//If raw does not exist yet
-				if(result === null){
-					//Save the new role
-					Promise.all([newUsePromise.save()])
+		if(req.body.user_password != undefined && req.body.user_passwordB != undefined && req.body.user_email != undefined && req.body.user_public_keyB != undefined && req.body.user_public_key != undefined && req.body.user_login != undefined){
+			console.log(2);
+			if(req.body.user_password == req.body.user_passwordB){
+				console.log(3);
+				if(req.body.user_public_key == req.body.user_public_keyB){
+
+					User.findOne({ where: {
+							user_login: req.body.user_login,
+						}})
 						.then( result => {
-							res.status(201);
-							res.send({
-								"login": result[0].login
-							});
+							console.log(5);
+							//If raw does not exist yet
+							if(result == null){
+								console.log(6);
+								//Save the new role
+								User.create(validator.mapUser(req))
+									.then( result2 => {
+										console.log(7);
+										res.status(201).end();
+									})
+									.catch( err =>{
+										console.log(8);
+										res.status(500);
+										res.send({
+											"error": "InternalServerError",
+											"code": 500,
+											"message": ":"+err
+										});
+									});
+								//If role exists yet
+							}else{
+								console.log(9);
+								res.status(409);
+								res.send({
+									"error": "UserAlreadyExist",
+									"code": 409,
+									"message": "The user yet exists"
+								});
+							}
 						})
 						.catch( err =>{
-							res.status(500);
+							console.log(10);
 							res.send({
 								"error": "InternalServerError",
 								"code": 500,
-								"message": err
+								"message": "Problem to check if the raw is yet existing"+err.message
 							});
 						});
-					//If role exists yet
+
 				}else{
-					res.status(409);
+					res.status(400);
 					res.send({
-						"error": "UserAlreadyExist",
-						"code": 409,
-						"message": "The user yet exists"
+						"error": "BodyError",
+						"code": 400,
+						"message": "The keys are not similar"
 					});
 				}
-			})
-			.catch( err =>{
-				res.send({
-					"error": "InternalServerError",
-					"code": 500,
-					"message": "Problem to check if the raw is yet existing"+err.message
-				});
-			});
 
-	}else{
+			}else{
+				res.status(400);
+				res.send({
+					"error": "BodyError",
+					"code": 400,
+					"message": "The passwords are not similar"
+				});
+			}
+
+		}else{
+			res.status(400);
+			res.send({
+				"error": "BodyError",
+				"code": 400,
+				"message": "One or many fields ares missing"
+			})
+		}
+
+	/*}else{
 		res.status(406);
 		res.send({
 			"error": "BadContentType",
 			"code": 406,
 			"message": "Content-type received: "+req.get('Content-Type')+". Content-type required : application/json"
 		});
-	}
+	}*/
 
 });
 

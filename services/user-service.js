@@ -1,5 +1,3 @@
-var uuidv4 = require('uuid/v4');
-
 //------------------------ List all fields of the table -----------------------------
 let fields = ['user_login', 'user_password', 'user_public_key', 'user_email'];
 
@@ -34,15 +32,14 @@ var checkAndFormatCallable = {
 //------------------------ The most important function that map request to an object well formed for the database -----------------------------
 module.exports.mapUser = function(req) {
 
-	let result = {
-	};
+	let result = {};
 
 	for (var key in req.body) {
+		console.log(key);
 		if (req.body.hasOwnProperty(key) && fields.includes(key)) {
 			result[key] = checkAndFormatCallable[key](req.body[key]);
 		}
 	}
 
 	return result;
-
 }

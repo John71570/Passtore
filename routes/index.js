@@ -23,11 +23,20 @@ router.get('/login', function(req, res, next) {
 	}
 });
 
+router.get('/initiate-session', function(req, res, next) {
+	if(!req.session.user){
+		req.session.user = req.user;
+		console.log('Authentication succeed');
+		res.redirect('/');
+	}else{
+		res.redirect('/login');
+	}
+});
+
 router.post('/login',
 	passport.authenticate('local', {
-		successRedirect: '/',
-		failureRedirect: '/login',
-		failureFlash: true
+		successRedirect: '/initiate-session',
+		failureRedirect: '/login'
 	})
 );
 
