@@ -29,8 +29,6 @@ router.post('/', function(req, res, next) {
 		var bod = req.body;
 		console.log(typeof bod);
 
-		//var newUsePromise = User.build(validator.mapUser(req));
-
 		if(req.body.user_password != undefined && req.body.user_passwordB != undefined && req.body.user_email != undefined && req.body.user_public_keyB != undefined && req.body.user_public_key != undefined && req.body.user_login != undefined){
 			console.log(2);
 			if(req.body.user_password == req.body.user_passwordB){
@@ -195,6 +193,5 @@ router.delete('/', function(req, res, next) {
 			});
 		});
 });
-
 
 module.exports = router;

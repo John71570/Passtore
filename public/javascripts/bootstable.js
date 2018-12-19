@@ -144,7 +144,7 @@ function rowEdit(but) {
     var $td = $("tr[id='editing'] td");
     rowAcep($td)
     var $row = $(but).parents('tr');  
-    var $cols = $row.find('td');  
+    var $cols = $row.find('td');
     if (ModoEdicion($row)) return;  //Ya está en edición
     //Pone en modo de edición
     IterarCamposEdit($cols, function($td) {  //itera por la columnas

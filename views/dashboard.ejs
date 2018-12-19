@@ -72,7 +72,7 @@
         </li>-->
       </ul>
       <span class="navbar-text p-lg-0 pt-sm-2 text-warning">
-        USER NAME
+        <%= user_login %>
       </span>
     </div>
   </nav>
@@ -88,14 +88,15 @@
     <table class="table table-password table-striped p-2 table-sm" id="makeEditable">
       <thead>
       <tr>
-        <th hidden>ID</th>
+        <th class="d-none">ID</th>
         <th style="min-width:150px">Website/Service</th>
         <th style="min-width:150px">Login</th>
         <th style="min-width:200px">Password</th>
         <th style="min-width:150px">Comments</th>
+        <th name="buttons"></th>
       </tr>
       </thead>
-      <tbody>
+      <tbody id="bodyTable">
       <% if(passwords){ %>
         <% passwords.forEach((raw, index) => { %>
         <tr>
@@ -120,20 +121,8 @@
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-  <script src="javascripts/bootstable.js" ></script>
-  <script>
-	  $('#makeEditable').SetEditable({
-		  $addButton: $('#but_add'),
-		  onEdit: function() {},
-		  onDelete: function() {
 
-          },
-		  onBeforeDelete: function(){
-		  	alert("SURE ?");
-          },
-		  onAdd: function() {}
-	  });
-  </script>
+  <script src="javascripts/script-dashboard.js"></script>
 
   </body>
 

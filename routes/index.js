@@ -55,19 +55,23 @@ router.get('/logout', function(req, res, next) {
 
 router.get('/dashboard', function(req, res, next) {
 
-	Password.findAll({ raw: true, where: { user: "johsn" } })
-		.then( passwords => {
-			if (passwords) {
-				res.render('dashboard', { passwords: passwords });
-			} else {
-				res.status(404);
-				res.render('dashboard');
-			}
-		})
-		.catch(err => {
-			res.status(500);
-			res.render('error');
-		});
+	if(req.session.user){
+		Password.findAll({ raw: true, where: { user: req.session.user.user_login } })
+			.then( passwords => {
+				if (passwords) {
+					res.render('dashboard', { passwords: passwords, user_login: req.session.user.user_login });
+				} else {
+					res.status(404);
+					res.render('dashboard');
+				}
+			})
+			.catch(err => {
+				res.status(500);
+				res.render('error');
+			});
+	}else{
+		res.redirect('/login');
+	}
 
 });
 
@@ -78,7 +82,7 @@ router.post('/raw', function(req, res, next) {
 		var newPasswordPromise = Password.build(validator.mapPassword(req, "john"));
 
 		Password.findOne({ where: {
-				user : "john",
+				user : req.session.user.user_login,
 				login : validator.checkAndFormat_login(req.body.login),
 				password : validator.checkAndFormat_password(req.body.password),
 				website : validator.checkAndFormat_website(req.body.website)
@@ -136,7 +140,7 @@ router.put('/raw/:uuid', function(req, res, next) {
 	if(req.is('application/json')){
 
 		Password.findOne({ where: {
-				user : "john",
+				user : req.session.user.user_login,
 				uuid : req.params.uuid
 			} })
 			.then( result =>{
@@ -185,7 +189,7 @@ router.put('/raw/:uuid', function(req, res, next) {
 router.delete('/raw/:uuid', function(req, res, next) {
 
 	Password.destroy({ where: {
-			user : "john",
+			user : req.session.user.user_login,
 			uuid : req.params.uuid
 		}})
 		.then( result => {
