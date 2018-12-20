@@ -7,10 +7,18 @@ var session = require('express-session');
 var passport = require('passport');
 var bodyParser = require('body-parser');
 
+var https = require('https');
+var fs = require('fs');
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/user');
 
 var app = express();
+
+https.createServer({
+    key: fs.readFileSync('./config/key.pem'),
+	cert: fs.readFileSync('./config/cert.pem')
+}, app).listen(3001);
 
 //------------------------------ All required modules from Planizi repository -----------------------------------
 var authenticationConfig = require('./config/config-authentication');
