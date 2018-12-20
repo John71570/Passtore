@@ -1,5 +1,7 @@
+var sha256 = require('sha256');
+
 //------------------------ List all fields of the table -----------------------------
-let fields = ['user_login', 'user_password', 'user_public_key', 'user_email'];
+let fields = ['user_login', 'user_public_key', 'user_email'];
 
 
 //------------------------ Define all methods that can check and format each field -----------------------------
@@ -8,7 +10,7 @@ module.exports.checkAndFormat_user_login = function(value){
 };
 
 module.exports.checkAndFormat_user_password = function(value){
-	return value;
+	return sha256.x2(value);
 };
 
 module.exports.checkAndFormat_user_public_key = function(value){
@@ -34,11 +36,14 @@ module.exports.mapUser = function(req) {
 
 	let result = {};
 
+	var salt = Date.now().toString();
+
 	for (var key in req.body) {
-		console.log(key);
 		if (req.body.hasOwnProperty(key) && fields.includes(key)) {
 			result[key] = checkAndFormatCallable[key](req.body[key]);
 		}
+		result['user_password'] = checkAndFormatCallable['user_password'](req.body['user_password']+salt);
+		result['user_salt'] = salt
 	}
 
 	return result;

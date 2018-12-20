@@ -20,6 +20,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       default: null
     },
+    user_salt: {
+        type: DataTypes.STRING(128),
+        allowNull: true,
+        default: null
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: true

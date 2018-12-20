@@ -3,6 +3,7 @@ var LocalStrategy = require('passport-local');
 var sequelize = require('../config/config-database').sequelize;
 var User = sequelize.import('../models/user');
 var validator =  require('../services/raw-service');
+var sha256 = require('sha256');
 
 let localAuthenticationConfiguration = passport.use(new LocalStrategy({
 		usernameField: 'username',
@@ -11,11 +12,10 @@ let localAuthenticationConfiguration = passport.use(new LocalStrategy({
 	function(login, password, done) {
 		User.findOne({ raw: true, where: { user_login: login }})
 			.then( user => {
-				console.log('AUTH: '+user.user_login+user.user_password);
 				if (!user) {
 					return done(null, false, { message: 'Incorrect username.' });
 				}
-				if (user.user_password != password) {
+				if (user.user_password != sha256.x2(password+user.user_salt)) {
 					return done(null, false, { message: 'Incorrect password.' });
 				}
 				return done(null, user);

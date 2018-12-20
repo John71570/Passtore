@@ -78,13 +78,9 @@ $( document ).ready(function() {
 	}
 
 	rowElim = function (but) {
-		/*$(but).parent().find('#bAcep').show();
-		$(but).parent().find('#bCanc').show();
-		$(but).parent().find('#bEdit').hide();
-		$(but).parent().find('#bElim').hide();*/
 		var $row = $(but).parents('tr');
 		$row.attr('id', 'editing');
-		var uuid = $row.find('.idRaw').html()
+		var uuid = $row.find('.idRaw').html();
 
 		$('#modalConfirmDelete').modal({
 			show: true
@@ -95,6 +91,7 @@ $( document ).ready(function() {
 		});
 
 		$('#btnYES').click(function(){
+			$row.remove();
 			$.ajax({
 				type: "DELETE",
 				url: "/raw/"+ uuid,
@@ -102,7 +99,7 @@ $( document ).ready(function() {
 					console.log("Status : " + xhr.status);
 					console.log("Response : " + xhr.responseText);
 					if (xhr.status == 204) {
-						$row.remove();
+
 					} else if (xhr.status == 400 || xhr.status == 409) {
 					} else {
 					}
