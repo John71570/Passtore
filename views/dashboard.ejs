@@ -120,6 +120,7 @@
       <button id="but_add" class="btn btn-primary">Add raw</button>
       <button id="but_add" class="btn btn-success">Valid updates</button>
     </div>
+    <span id="demo3"></span>
 
   </div>
 
@@ -145,5 +146,21 @@
   </div>
 
   </body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+<script>
+    var myString   = "https://www.titanesmedellin.com/";
+    var myPassword = "myPassword"
+
+
+    // PROCESS
+    var encrypted = CryptoJS.AES.encrypt(myString, myPassword);
+    var decrypted = CryptoJS.AES.decrypt(encrypted, myPassword);
+
+    console.log(myString);
+    console.log(encrypted);
+    console.log(decrypted);
+    document.getElementById("demo3").innerHTML = decrypted.toString(CryptoJS.enc.Utf8);
+  </script>
 
 </html>

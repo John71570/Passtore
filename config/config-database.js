@@ -36,6 +36,7 @@ let sequelizeAuthentication = function (){
 			console.log('Connected to DB with Sequelize !');
 		}, function (err) {
 			console.log('Connexion to DB with Sequelize do not works');
+			console.log(err);
 		})
 }
 
