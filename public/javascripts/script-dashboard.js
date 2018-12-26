@@ -96,8 +96,8 @@ $( document ).ready(function() {
 				type: "DELETE",
 				url: "/raw/"+ uuid,
 				complete: function (xhr, status, errorThrown) {
-					console.log("Status : " + xhr.status);
-					console.log("Response : " + xhr.responseText);
+					//console.log("Status : " + xhr.status);
+					//console.log("Response : " + xhr.responseText);
 					if (xhr.status == 204) {
 
 					} else if (xhr.status == 400 || xhr.status == 409) {
@@ -128,52 +128,66 @@ $( document ).ready(function() {
 		var cont44 = $row.find('.commentRaw').find('input').val();
 		$row.find('.commentRaw').html(cont44);
 
-		var ladata = {
-			login: cont22,
-			password: cont33,
-			website: cont11,
-			comment: cont44,
-		};
+		$.ajax({
+			type: "GET",
+			url: "/user",
+			complete: function (xhr, status, errorThrown) {
+				console.log("Status : " + xhr.status);
+				console.log("Response : " + xhr.responseText);
+				if (xhr.status == 200) {
+					var key = JSON.parse(xhr.responseText).user_public_key;
+					var ladata = {
+						login: cont22,
+						password: CryptoJS.AES.encrypt(cont33, key).toString(),
+						website: cont11,
+						comment: cont44,
+					};
 
-		if(uuid==''){
-			$.ajax({
-				type: "POST",
-				url: "/raw",
-				dataType: "json",
-				contentType: "application/json",
-				data: JSON.stringify(ladata),
-				complete: function (xhr, status, errorThrown) {
-					console.log("Status : " + xhr.status);
-					console.log("Response : " + xhr.responseText);
-					if (xhr.status == 201) {
-						$row.find('.idRaw').html(JSON.parse(xhr.responseText).uuid);
-					} else if (xhr.status == 400 || xhr.status == 409) {
+					if(uuid==''){
+						$.ajax({
+							type: "POST",
+							url: "/raw",
+							dataType: "json",
+							contentType: "application/json",
+							data: JSON.stringify(ladata),
+							complete: function (xhr, status, errorThrown) {
+								console.log("Status : " + xhr.status);
+								console.log("Response : " + xhr.responseText);
+								if (xhr.status == 201) {
+									$row.find('.idRaw').html(JSON.parse(xhr.responseText).uuid);
+								} else if (xhr.status == 400 || xhr.status == 409) {
 
-					} else {
+								} else {
 
+								}
+							}
+						});
+					}else{
+						$.ajax({
+							type: "PUT",
+							url: "/raw/"+uuid,
+							dataType: "json",
+							contentType: "application/json",
+							data: JSON.stringify(ladata),
+							complete: function (xhr, status, errorThrown) {
+								console.log("Status : " + xhr.status);
+								console.log("Response : " + xhr.responseText);
+								if (xhr.status == 201) {
+									$row.find('.idRaw').html(JSON.parse(xhr.responseText).uuid);
+								} else if (xhr.status == 400 || xhr.status == 409) {
+
+								} else {
+
+								}
+							}
+						});
 					}
-				}
-			});
-		}else{
-			$.ajax({
-				type: "PUT",
-				url: "/raw/"+uuid,
-				dataType: "json",
-				contentType: "application/json",
-				data: JSON.stringify(ladata),
-				complete: function (xhr, status, errorThrown) {
-					console.log("Status : " + xhr.status);
-					console.log("Response : " + xhr.responseText);
-					if (xhr.status == 201) {
-						$row.find('.idRaw').html(JSON.parse(xhr.responseText).uuid);
-					} else if (xhr.status == 400 || xhr.status == 409) {
 
-					} else {
+				} else {
 
-					}
 				}
-			});
-		}
+			}
+		});
 
 	}
 
@@ -190,5 +204,23 @@ $( document ).ready(function() {
 		$row.find('.passwordRaw').html(cont3);
 		$row.find('.commentRaw').html(cont4);
 	}
+
+	rowDecryptCancel = function(){
+		$('#inputFrontKey').val('');
+	};
+
+	rowDecrypt = function(){
+		var decryptKey = $('#inputFrontKey').val();
+
+		$(".passwordRaw").each(function(raw){
+			var decrypted = CryptoJS.AES.decrypt($(this).text(), decryptKey);
+			res = decrypted.toString(CryptoJS.enc.Utf8);
+			if(res != ''){
+				$(this).text(res);
+			}
+		});
+
+		$('#inputFrontKey').val('');
+	};
 
 });

@@ -3,9 +3,10 @@ var router = express.Router();
 var passport = require('passport');
 var sequelize = require('../config/config-database').sequelize;
 var Password = sequelize.import('../models/password');
+var User = sequelize.import('../models/user');
 var validator =  require('../services/raw-service');
 var uuidv4 = require('uuid/v4');
-
+var cryptoJS = require('crypto-js');
 
 router.get('/', function (req, res, next) {
 	if(req.session.user){
@@ -26,6 +27,7 @@ router.get('/login', function(req, res, next) {
 router.get('/initiate-session', function(req, res, next) {
 	if(!req.session.user){
 		req.session.user = req.user;
+		req.session.user.user_public_key = cryptoJS.AES.decrypt(req.session.user.user_public_key.toString(), 'randomKEY2019minusculeMAJUSCULE'+req.session.user.user_salt+'randomgeneratedMESSAGEagain2019').toString(cryptoJS.enc.Utf8);
 		console.log('Authentication succeed');
 		res.redirect('/');
 	}else{
@@ -75,11 +77,41 @@ router.get('/dashboard', function(req, res, next) {
 
 });
 
+router.get('/configurations', function (req, res, next) {
+	if(req.session.user){
+
+		User.findOne({ raw: true, where: { user_login: req.session.user.user_login } })
+			.then( user => {
+				if (user) {
+					user.user_public_key = cryptoJS.AES.decrypt(user.user_public_key.toString(), 'randomKEY2019minusculeMAJUSCULE'+user.user_salt+'randomgeneratedMESSAGEagain2019').toString(cryptoJS.enc.Utf8);
+					res.render('configurations', {user: user});
+				} else {
+					res.status(404);
+					res.render('dashboard');
+				}
+			})
+			.catch( err => {
+				res.status(500);
+				res.render('error');
+			});
+
+	}else{
+		res.redirect('login');
+	}
+
+
+});
+
+router.post('/settings', function (req, res, next) {
+
+});
+
 router.post('/raw', function(req, res, next) {
 
 	if(req.is('application/json')){
 
-		var newPasswordPromise = Password.build(validator.mapPassword(req, "john"));
+		//req.body.password = cryptoJS.AES.encrypt(req.body.password, req.session.user.user_public_key).toString();
+		var newPasswordPromise = Password.build(validator.mapPassword(req, req.session.user.user_login));
 
 		Password.findOne({ where: {
 				user : req.session.user.user_login,
@@ -147,7 +179,8 @@ router.put('/raw/:uuid', function(req, res, next) {
 
 				if (result) {
 
-					result.update(validator.mapPassword(req)).then( result2 => {
+					//req.body.password = cryptoJS.AES.encrypt(req.body.password, req.session.user.user_public_key).toString();
+					result.update(validator.mapPassword(req, req.session.user.user_login)).then( result2 => {
 						res.status(204).end();
 					}).catch( err => {
 						res.status(500);

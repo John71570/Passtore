@@ -5,13 +5,16 @@ var sequelize = require('../config/config-database').sequelize;
 var User = sequelize.import('../models/user');
 var validator =  require('../services/user-service');
 var sha256 = require('sha256');
+var cryptoJS = require('crypto-js');
 
 router.get('/', function(req, res, next) {
 
-	User.findOne({ raw: true, where: { user_login: "john" } })
+	User.findOne({ raw: true, where: { user_login: req.session.user.user_login } })
 		.then( user => {
 			if (user) {
-				res.render('configurations', { user: userInfo });
+				user.user_public_key = cryptoJS.AES.decrypt(user.user_public_key.toString(), 'randomKEY2019minusculeMAJUSCULE'+user.user_salt+'randomgeneratedMESSAGEagain2019').toString(cryptoJS.enc.Utf8);
+				res.status(200);
+				res.send(user);
 			} else {
 				res.status(404);
 				res.render('dashboard');
@@ -117,13 +120,13 @@ router.put('/', function(req, res, next) {
 	if(req.is('application/json')){
 
 		User.findOne({ where: {
-				user_login : "userJ"
+				user_login : req.session.user.user_login
 			} })
 			.then( result =>{
 
 				if (result) {
 
-					req.body.user_login = "userJ";
+					req.body.user_login = req.session.user.user_login;
 					result.update(validator.mapUser(req)).then( result2 => {
 						res.status(204).end();
 					}).catch( err => {
@@ -166,7 +169,7 @@ router.put('/', function(req, res, next) {
 router.delete('/', function(req, res, next) {
 
 	User.destroy({ where: {
-			user_login : "john",
+			user_login : req.session.user.user_login,
 		}})
 		.then( result => {
 			if (result > 0) {

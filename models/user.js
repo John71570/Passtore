@@ -12,7 +12,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     user_public_key: {
-      type: DataTypes.STRING(8192),
+      type: DataTypes.BLOB,
       allowNull: false
     },
     user_email: {

@@ -12,13 +12,21 @@ let localAuthenticationConfiguration = passport.use(new LocalStrategy({
 	function(login, password, done) {
 		User.findOne({ raw: true, where: { user_login: login }})
 			.then( user => {
-				if (!user) {
-					return done(null, false, { message: 'Incorrect username.' });
-				}
-				if (user.user_password != sha256.x2(password+user.user_salt)) {
-					return done(null, false, { message: 'Incorrect password.' });
-				}
-				return done(null, user);
+
+				setTimeout(function () {
+
+					if (!user) {
+						return done(null, false, {message: 'Incorrect username.'});
+					}
+					if (user.user_password != sha256.x2(password + user.user_salt)) {
+						return done(null, false, {message: 'Incorrect password.'});
+					}
+					return done(null, user);
+
+				}, 3000);
+
+
+
 			})
 			.catch( err => {
 				return done(err);

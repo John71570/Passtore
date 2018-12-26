@@ -1,7 +1,8 @@
 var sha256 = require('sha256');
+var cryptoJS = require("crypto-js");
 
 //------------------------ List all fields of the table -----------------------------
-let fields = ['user_login', 'user_public_key', 'user_email'];
+let fields = ['user_login', 'user_email'];
 
 
 //------------------------ Define all methods that can check and format each field -----------------------------
@@ -43,7 +44,9 @@ module.exports.mapUser = function(req) {
 			result[key] = checkAndFormatCallable[key](req.body[key]);
 		}
 		result['user_password'] = checkAndFormatCallable['user_password'](req.body['user_password']+salt);
-		result['user_salt'] = salt
+		result['user_salt'] = salt;
+		result['user_public_key'] = cryptoJS.AES.encrypt(req.body.user_public_key, 'randomKEY2019minusculeMAJUSCULE'+salt+'randomgeneratedMESSAGEagain2019');
+		console.log(result['user_public_key']);
 	}
 
 	return result;

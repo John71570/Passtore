@@ -36,7 +36,7 @@ module.exports.mapPassword = function(req, user) {
 
 	let result = {
 		uuid: uuidv4(),
-		user: "john"
+		user: user
 	};
 
 	for (var key in req.body) {
