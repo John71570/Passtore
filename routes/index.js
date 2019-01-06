@@ -8,6 +8,10 @@ var validator =  require('../services/raw-service');
 var uuidv4 = require('uuid/v4');
 var cryptoJS = require('crypto-js');
 
+router.get('/home', function(req, res, next){
+	res.redirect('/');
+});
+
 router.get('/', function (req, res, next) {
 	if(req.session.user){
 		res.redirect('/dashboard');
