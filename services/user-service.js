@@ -46,7 +46,6 @@ module.exports.mapUser = function(req) {
 		result['user_password'] = checkAndFormatCallable['user_password'](req.body['user_password']+salt);
 		result['user_salt'] = salt;
 		result['user_public_key'] = cryptoJS.AES.encrypt(req.body.user_public_key, 'randomKEY2019minusculeMAJUSCULE'+salt+'randomgeneratedMESSAGEagain2019');
-		console.log(result['user_public_key']);
 	}
 
 	return result;

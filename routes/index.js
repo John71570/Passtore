@@ -7,6 +7,7 @@ var User = sequelize.import('../models/user');
 var validator =  require('../services/raw-service');
 var uuidv4 = require('uuid/v4');
 var cryptoJS = require('crypto-js');
+var sha256 = require('sha256');
 
 router.get('/home', function(req, res, next){
 	res.redirect('/');
@@ -102,12 +103,109 @@ router.get('/configurations', function (req, res, next) {
 	}else{
 		res.redirect('login');
 	}
+});
 
+router.get('/publickey', function (req, res, next) {
+	if(req.session.user){
 
+		User.findOne({ raw: true, where: { user_login: req.session.user.user_login } })
+			.then( user => {
+				if (user) {
+					var publickey = cryptoJS.AES.decrypt(user.user_public_key.toString(), 'randomKEY2019minusculeMAJUSCULE'+user.user_salt+'randomgeneratedMESSAGEagain2019').toString(cryptoJS.enc.Utf8);
+					res.status(200);
+					res.send({
+						"public_key": publickey
+					});
+				} else {
+					res.status(404);
+					res.send({
+						"error": "UserNotExists",
+						"code": 404,
+						"message": "The user does not exists"
+					});
+				}
+			})
+			.catch( err => {
+				res.status(500);
+				res.send({
+					"error": "InternalServerError",
+					"code": 500,
+					"message": "Problem to check if the user exists"
+				});
+			});
+
+	}else{
+		res.status(500);
+		res.send({
+			"error": "Unauthorized",
+			"code": 500,
+			"message": "You are not authorized"
+		});
+	}
 });
 
 router.post('/settings', function (req, res, next) {
+	if(req.session.user){
 
+		var bod = req.body;
+		var updated = {};
+
+		User.findOne({where: { user_login: req.session.user.user_login } })
+			.then( user => {
+				if (user) {
+
+					if(req.body.user_password != undefined && req.body.user_passwordB != undefined){
+
+						if(req.body.user_password == req.body.user_passwordB){
+							updated['user_password'] = sha256.x2(req.body['user_password']+user.user_salt);
+						}else {
+							res.status(400);
+							res.send({
+								"error": "BodyError",
+								"code": 400,
+								"message": "The passwords are not similar"
+							});
+						}
+
+					}
+
+					if(req.body.user_email != undefined){
+						updated['user_email'] = req.body.user_email;
+					}
+
+					user.update(updated).then( result => {
+						res.status(200).end();
+					}).catch( err => {
+						res.status(500);
+						res.send(errorResponse.InternalServerError("Problem to update informations : "+err));
+					});
+
+				} else {
+					res.status(400);
+					res.send({
+						"error": "UserNotExists",
+						"code": 400,
+						"message": "No user exists"
+					});
+				}
+			})
+			.catch( err => {
+				res.status(500);
+				res.send({
+					"error": "InternalServerError",
+					"code": 500,
+					"message": err.message
+				});
+			});
+
+	}else{
+		res.status(500);
+		res.send({
+			"error": "Unauthorized",
+			"code": 500,
+			"message": "You are not authorized"
+		});
+	}
 });
 
 router.post('/raw', function(req, res, next) {
