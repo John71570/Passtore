@@ -25,8 +25,6 @@ let localAuthenticationConfiguration = passport.use(new LocalStrategy({
 
 				}, 3000);
 
-
-
 			})
 			.catch( err => {
 				return done(err);
